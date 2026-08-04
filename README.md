@@ -81,7 +81,6 @@ Node.js and Express on the server, WebSockets for live updates, simple HTML/JS d
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — modules and principles  
 - [PROCESS_FLOW.md](./PROCESS_FLOW.md) — startup through review  
-- [CONTEXT_PROMPT.md](./CONTEXT_PROMPT.md) — if you or an AI extend these docs safely  
 - [project.meta.json](./project.meta.json) — keywords for profiles and search  
 
 ---
@@ -96,6 +95,6 @@ This is not financial advice. It describes software for running a trading desk, 
 
 ## Contributing
 
-Read [CONTEXT_PROMPT.md](./CONTEXT_PROMPT.md) first. Please do not commit secrets, live configs, or strategy parameters.
+Please do not commit secrets, live configs, or strategy parameters.
 
 **Contact:** [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
