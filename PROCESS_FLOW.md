@@ -2,7 +2,7 @@
 
 **Holy Grail's Automated Trading** · **Holy Grail Z-2311** · [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
 
-Walkthrough from first setup to review. Same story everywhere: risk first, then Holy Grail automation, then optional ML nudges from your journals. I keep numbers and secret rule names out of this public doc on purpose.
+**Scope of this guide** — Follow these pages when you set up Holy Grail, reach steady state, or review desk behavior. Keep the order consistent: **risk checks**, then **automation**, then optional **Machine Learning** input from your journals. Configure concrete thresholds and proprietary rule names in your deployment and account files; this public guide omits them.
 
 ---
 
@@ -14,12 +14,12 @@ flowchart LR
   RISK -->|ok| AUTO[Act]
   RISK -->|no| LOG[Log skip]
   AUTO --> SYNC[Sync book]
-  ML[ML hint] -.-> WATCH
+  ML[Machine Learning advice] -.-> WATCH
   LOG --> WATCH
   SYNC --> WATCH
 ```
 
-Most days look like this: watch the market, run risk, act only on pass, sync the book, repeat. ML may read past cycles and suggest what to weigh more heavily — it never skips the risk diamond or places an order alone.
+**Daily loop** — Watch the market, run risk, act only when risk passes, sync the book, and repeat. Treat Machine Learning suggestions as advisory only; do not let them skip the risk check or place an order alone.
 
 ---
 
@@ -33,13 +33,13 @@ sequenceDiagram
   participant Probe as Connection probe
   participant UI as Dashboard
 
-  You->>Loader: Set env + preferences
+  You->>Loader: Account files + preferences
   Loader->>Store: Merge defaults with your settings
   Store->>Probe: Check API reachability (async)
   Probe-->>UI: Ready or warning badge
 ```
 
-You drop in env and preferences. The engine merges them with defaults and probes the API without freezing the UI. If something is wrong with keys or connectivity, you see a warning before any trading logic pretends things are fine.
+**Initial deploy** — Add account files and preferences for your primary venue (crypto exchange, forex broker or MT5 bridge, or retail broker API). Check that venue's official documentation for auth, streams, and rate limits before you go live. Expect the System to merge defaults, probe the API without freezing the UI, and show a warning before trading logic runs if credentials or connectivity fail.
 
 ---
 
@@ -57,7 +57,7 @@ flowchart TD
   H --> I[Background sync and reports]
 ```
 
-The desk shows up first; heavy exchange work comes in stages. The watch loop then ticks on its own schedule, separate from one-off manual clicks.
+**Startup** — Bring the dashboard online first. Stage heavier exchange work with automatic delay and backoff so boot stays within rate limits. Run the watch loop on its schedule, separate from one-off manual actions.
 
 ---
 
@@ -66,14 +66,14 @@ The desk shows up first; heavy exchange work comes in stages. The watch loop the
 ```mermaid
 flowchart LR
   SCAN[Market watch] --> FILTER[Screening]
-  FILTER --> GATE{Risk gates}
-  GATE -->|pass| EXEC[Execute]
-  GATE -->|fail| LOG[Skip log]
+  FILTER --> RS{Risk screening}
+  RS -->|pass| EXEC[Execute]
+  RS -->|fail| LOG[Skip log]
   EXEC --> POST[Post-trade review]
   POST --> SCAN
 ```
 
-Screening follows whatever you configured in the deployed app. Risk runs first — positions, cooldowns, margin, exposure, connectivity. Only then may automation execute. Every skip gets a reason in the log. ML scores or labels, if present, are extra context, not approval.
+**New risk scan** — Screen using rules you configured in the deployed System. Run risk on positions, cooldowns, margin, exposure, and connectivity before automation executes. Log a reason for every skip. Use Machine Learning scores or labels as extra context, not as approval to trade.
 
 ---
 
@@ -94,29 +94,29 @@ sequenceDiagram
   RECON->>UI: Fix stale rows
 ```
 
-The exchange owns the truth for open risk. Streams keep the UI fresh; a periodic sync fixes drift. When you close, symbol handling follows execution rules so you are not blocked by the same filters used for brand-new entries.
+**Book sync** — Treat the exchange as the source of truth for open risk. Push stream updates to the UI and run periodic REST sync to fix drift. Follow execution symbol rules on closes so entry-only filters do not block exits.
 
 ---
 
 ## From the dashboard
 
-- **See positions** — WebSocket or cache from the live connection.  
-- **Partial close** — UI → API → symbol check → order.  
-- **Refresh balances** — REST → cache update.  
-- **Alerts** — Optional webhook or chat to a channel you own.
+- **See positions** — Read from WebSocket or cache on the live connection.
+- **Partial close** — Send UI → API → symbol check → order in sequence.
+- **Refresh balances** — Pull REST snapshots and update cache.
+- **Alerts** — Route optional webhooks or chat to a channel you own.
 
 ---
 
-## Types of risk rules (no magic numbers here)
+## Types of risk rules (thresholds not listed here)
 
-These categories beat automation triggers and ML hints every time:
+When you tune policy, these categories override automation triggers and Machine Learning hints:
 
-- **Session** — Only when your profile is loaded and automation mode allows it.  
-- **Symbols** — Block garbage or disallowed names on new entry.  
-- **Exposure** — Cap how much you can have on at once.  
-- **Margin** — Block new risk when collateral is too thin.  
-- **Connectivity** — Back off when the exchange rate-limits you.  
-- **Audit** — Allow and deny both leave a trail automation and ML must respect.
+- **Session** — Act only when your profile is loaded and automation mode allows it.
+- **Symbols** — Block disallowed names on new entry.
+- **Exposure** — Cap total open risk.
+- **Margin** — Block new risk when collateral is too thin.
+- **Connectivity** — Apply automatic delay and backoff when rate limits apply; throttle rather than surfacing avoidable errors.
+- **Audit** — Write allows and denies to a trail that automation and Machine Learning both honor.
 
 ---
 
@@ -126,16 +126,20 @@ These categories beat automation triggers and ML hints every time:
 flowchart LR
   TRADE[Trade event] --> JOURNAL[Journal]
   JOURNAL --> REPORT[Summaries]
-  REPORT --> TUNE[You tune config]
+  REPORT --> TUNE[Tune config]
   TUNE --> SCAN[Next watch]
 ```
 
-Events land in journals for reports and, in the running app, for ML feedback at a high level — I do not spec models here. You change automation and risk from evidence in the logs, not from a model whispering off the record.
+**Post-trade review** — Write events to journals for reports and, in the running System, for high-level Machine Learning feedback. Tune automation and risk from log evidence and any advisory model output recorded there; this repo does not specify models.
 
 ---
 
 ## Symbol strictness (quick reminder)
 
-New entries: strict. Exits: match what the exchange already has open. Live relay: trust exchange strings after sanitization.
+**New entries** — Keep symbol checks strict.
 
-Module boundaries: [ARCHITECTURE.md](./ARCHITECTURE.md)
+**Exits** — Match symbols the exchange already has open.
+
+**Live relay** — Use exchange strings after sanitization.
+
+Module detail: [ARCHITECTURE.md](./ARCHITECTURE.md)

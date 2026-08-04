@@ -2,22 +2,24 @@
 
 **Holy Grail's Automated Trading** · **Holy Grail Z-2311** · [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
 
-This is how I think about the system: one person, three markets (crypto, stocks, forex), one engine on your box. Automation does the repetitive work. Risk sits above it. Machine learning listens to your history and helps you see patterns — it never gets the keys to the execution door.
+Use this page when you need a map of the Holy Grail System on the machine you operate. The diagrams and module names here describe the **deployed System**. This git repository stores the guide only; trading, broker sessions, account files, and journals live in the System you run locally.
 
-The module names below are how I explain the product to humans, not official vendor terms.
+When you deploy Holy Grail we can expect crypto, stocks, and forex in a single System instance. Enable automation for repetitive watch-and-act work. Run risk before any order path executes. Use Machine Learning to read trade and skip history for prioritization hints, it stays advisory and never submits orders or bypasses risk.
+
+Module labels in this document are Holy Grail product language, not official names from exchanges or brokers.
 
 ---
 
-## What wins when things disagree
+## When layers disagree
 
 ```mermaid
 flowchart TB
-  subgraph Boss["Decides trades"]
+  subgraph Decides["Trade decisions"]
     RM[Risk and audit]
     HG[Holy Grail automation]
   end
-  subgraph Helps["Informs only"]
-    ML[Machine learning]
+  subgraph Informs["Informs only"]
+    ML[Machine Learning]
     AUX[Market context]
   end
   RM --> HG
@@ -25,7 +27,13 @@ flowchart TB
   ML --> AUX
 ```
 
-Automation is the watch–screen–act path you enable. Risk wraps it: pre-trade checks, exposure and margin limits, rate discipline, and an append-only audit trail. ML, at a high level: it reads trade and skip history over time and can improve how the watch loop prioritizes symbols or labels scenarios. Every ML output is logged and still subject to the same gates — no order because a model said so.
+
+
+**Risk and audit** — Apply pre-trade checks, exposure and margin limits, rate discipline, and an append-only audit trail before automation acts.
+
+**Holy Grail automation** — Run the watch–screen–act path you turn on after risk clears.
+
+**Machine Learning** — Read trade and skip history to adjust prioritization or labels. Log every output and evaluate it through the same risk screening as deterministic rules. Do not release an order because a model recommended it.
 
 ---
 
@@ -44,14 +52,14 @@ flowchart LR
     ORCH[Watch loop]
   end
 
-  subgraph Core["Inside the engine"]
+  subgraph Core["Inside the System"]
     CONN[Market connection]
-    CFG[Your settings]
+    CFG[Account files]
     TRD[Trading path]
     SEC[Risk and audit]
     LOG[Logging]
     AUX[Reference data]
-    ML[ML support]
+    ML[Machine Learning]
   end
 
   subgraph External
@@ -68,31 +76,82 @@ flowchart LR
   TRD --> LOG
 ```
 
+
+
 ---
 
 ## What each part does
 
-**Risk and audit** — The first and last word on whether an order may go out. Exposure, margin, symbol policy, and a record you can read later.
+**Risk and audit** — Check whether an order may execute. Track exposure, margin, and symbol policy, and keep a record you can read and analyze later.
 
-**Trading path** — The Holy Grail loop: watch, screen, route orders you have allowed, show the portfolio.
+**Trading path** — Run the Holy Grail loop you enabled. Watch markets, screen candidates, route only orders you allowed, and keep the portfolio view aligned with live positions.
 
-**Market connection** — REST, streams, rate budgeting, retries when the exchange gets grumpy.
+**Market connection** — Connect over REST and streams for your chosen venue. Budget request rates, apply automatic delay and backoff when limits apply, and map base URLs and stream endpoints from that venue's official API documentation. See [Example venues and API references](#example-venues-and-api-references).
 
-**Settings** — Defaults plus your env file; toggles for automation and risk.
+**Settings** — Merge built-in defaults with your **account files** (accounts and related settings). Use toggles to set automation and risk behavior according to your runbook.
 
-**ML support** — Feedback from outcomes, pattern memory, ranking helpers. Support role only.
+**Machine Learning support** — Review advisory feedback from outcomes, pattern memory, and ranking helpers. Do not grant this layer execution keys or order authority.
 
-**Logging** — Readable under load; dedupe where it helps.
+**Logging** — Keep logs readable under load. Deduplicate repeated entries where that helps you review faster.
 
-**Reference data** — Cached market context (filters, universes) without baking strategy into this doc repo.
+**Reference data** — Cache market context such as filters and universes. Keep strategy parameters in your deployment, not in this documentation repository.
 
-**Runtime mode** — Monitor vs live, automation on or off.
+**Runtime mode** — Choose monitor or live operation. Turn automation on or off according to your runbook.
 
 ---
 
-## Where data lives (in the real app)
+## Example venues and API references
 
-Connection health and rate windows live in one place; your non-secret profile settings in another; trading lists, caches, and journals (including history ML can learn from) in another; security audit as append-only logs. API keys stay in the environment, never in git.
+Holy Grail runs **one account per deployment**; that account connects to **one primary venue** at a time (crypto exchange, forex stack, or retail broker). Use account files to record venue name, environment (live or paper), base URLs, and permission scopes. Read each vendor's official documentation for authentication, user streams, and rate limits, then align your deployment with **Exchange rate limits** in Operating guidance below.
+
+**Crypto — Binance** — Follow Binance developer documentation for REST and WebSocket usage. Use separate doc sets for spot versus USDⓈ-M futures if you trade both. Store API keys and IP allowlists in account configuration on your host.
+
+- [Binance Developer Center](https://developers.binance.com/en)
+- [Binance Spot API documentation](https://developers.binance.com/docs/binance-spot-api-docs/README)
+- [Binance USDⓈ-M Futures documentation](https://developers.binance.com/docs/derivatives/usds-margined-futures/general-info)
+
+**Crypto — Bitget** — Follow Bitget REST and WebSocket guides for the products you enable (spot, margin, futures). Sign requests with the vendor's key, timestamp, and passphrase rules, and keep clock skew within their limits.
+
+- [Bitget API introduction](https://www.bitget.com/api-doc/common/intro)
+- [Bitget spot API documentation](https://bitgetlimited.github.io/apidoc/en/spot/)
+
+**Forex — MetaTrader 5 (MT5)** — When you bridge through MT5, keep **MetaTrader 5** (the platform) separate from **M5** (the five-minute chart timeframe) in runbooks and account file labels. Expert Advisors and scripts may reach external REST APIs through `WebRequest` only for URLs you allowlisted in the terminal.
+
+- [MQL5 WebRequest reference](https://www.mql5.com/en/docs/network/webrequest)
+- [MetaTrader 5 Help](https://www.metatrader5.com/en/terminal/help)
+
+**Forex — broker REST (general)** — Many FX brokers publish REST or FIX bridges. Start from the broker's primary developer portal and mirror connection settings in account files. Example: [OANDA REST v20 introduction](https://developer.oanda.com/rest-live-v20/introduction/).
+
+**Stocks — US equities (published APIs)** — Retail US stock automation requires a broker that ships official developer documentation. Map one broker account per deployment in account files; store credentials on the host, never in git.
+
+**Stocks — Alpaca** — Use Alpaca Trading and Market Data APIs for US equities (and crypto where your account allows). Read the US docs hub and validate in paper before live keys.
+
+- [Alpaca US API documentation](https://docs.alpaca.markets/us/)
+
+**Stocks — Interactive Brokers** — Follow IBKR API guidance for Client Portal Web API or TWS API integration. Configure gateway, session, or OAuth flows as the vendor documents.
+
+- [IBKR API overview](https://www.interactivebrokers.com/campus/ibkr-api-page/)
+- [Client Portal Web API documentation](https://interactivebrokers.github.io/cpwebapi/)
+
+**Stocks — Tradier** — Use Tradier's brokerage API for US equities and options when enabled on your account.
+
+- [Tradier API documentation](https://documentation.tradier.com/)
+
+**Stocks — Charles Schwab** — Use the Schwab Trader API through the developer portal after app registration and OAuth setup where required.
+
+- [Schwab Developer Portal](https://developer.schwab.com/)
+
+**Stocks — tastytrade** — Use tastytrade's open API documentation for supported account and trading endpoints.
+
+- [tastytrade Developer Documentation](https://developer.tastytrade.com/)
+
+**Examples, not endorsements** — Links name common venues users ask about. You remain responsible for each platform's terms of service, market access, and compliance in your jurisdiction.
+
+---
+
+## Where data lives (in the live System)
+
+**Operational stores** — Plan separate locations for connection health and rate windows, non-secret account configuration, trading lists and caches, journals (including history Machine Learning can learn from), and append-only security audit logs. Keep API credentials in account configuration on the host, never in git.
 
 This documentation folder does not ship any of that data.
 
@@ -100,28 +159,42 @@ This documentation folder does not ship any of that data.
 
 ## What you touch in the UI
 
-Main dashboard for status and balances, portfolio for total exposure, position detail when you need to act on one symbol, shared refresh logic so pages do not fight each other.
+**Dashboard** — Review status and balances at a glance.
+
+**Portfolio** — Track total exposure across open positions.
+
+**Position detail** — Act on one symbol when you need a targeted change.
+
+**Refresh behavior** — Rely on shared refresh logic so pages do not fight each other.
 
 ---
 
 ## Starting the process
 
-One Node process loads config, wires modules, brings HTTP and WebSocket online, then eases into exchange work so you do not spike rate limits on boot.
+**Boot sequence** — Load config, wire modules, bring HTTP and WebSocket online, then stagger exchange work with automatic delay and backoff so startup stays within rate limits.
 
 ---
 
-## Principles I do not bend
+## Operating guidance
 
-1. **Risk before automation before ML** — That order is the product.
-2. **ML advises; gates decide** — Reprioritize and label, do not bypass.
-3. **If it traded or skipped, log why** — No silent black-box moments.
-4. **Strict symbols on new entries, lighter on exits** — Open risk is protected; closing should not get stuck on discovery rules.
-5. **One operator per deployment** — Simple mental model.
-6. **Respect rate limits** — Back off instead of pretending the error did not happen.
-7. **This repo is the map; the app is the territory.**
+When you deploy and run Holy Grail, keep the following in mind. They describe how the System is meant to behave and how this documentation relates to your installation.
+
+**Stack order** — Run risk review before any automated action. Place Machine Learning after risk and automation. Keep execution authority with your configured filters and screening rules, not with models.
+
+**Machine Learning stays advisory** — Allow models to reprioritize watch lists and label scenarios from journal history. Do not use models to approve orders, store credentials, or skip risk checks.
+
+**Auditable decisions** — Record a reason in the append-only log for every automated trade and every skip. Reconstruct desk behavior from logs when you review.
+
+**Symbol rules by intent** — Apply strict symbol validation on new entries to contain open risk. On exits, align with positions the exchange already recognizes so closes are not blocked by entry-only filters.
+
+**One account per deployment** — Tie each installation to a single trading account and book. Keep exposure, credentials, and journals in that bounded scope for review.
+
+**Exchange rate limits** — Pace REST and stream traffic with automatic delay and backoff. Wait within published limits rather than driving repeated API errors.
+
+**Docs versus live System** — Use this repository for architecture and process guides. Run trading, account files, broker sessions, and journals in the System on infrastructure you control.
 
 ---
 
 ## Next
 
-[PROCESS_FLOW.md](./PROCESS_FLOW.md) — walk through time, not just boxes
+[PROCESS_FLOW.md](./PROCESS_FLOW.md) — walk through setup, steady state, and review

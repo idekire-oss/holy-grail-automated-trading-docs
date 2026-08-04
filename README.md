@@ -2,60 +2,73 @@
 
 **Author:** Holy Grail Z-2311 · [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
 
-You run your own book — crypto, stocks, or forex — and you do not want a hosted bot holding your keys or guessing your size. Holy Grail's Automated Trading is the story of how I built a **self-hosted desk** for that: one operator, one process, your machine.
+This repository is the **user guide** for Holy Grail's Automated Trading—a self-hosted desk you run for **one account** across crypto, stocks, and forex. Use these pages to learn how the System is organized, how a normal day flows, and what to configure on your side before anything trades.
 
-The engine does what a patient assistant would do if they followed rules exactly: **watch the market**, **check risk before anything leaves**, then **act** only when you have allowed it. Machine learning is in the loop too, but in a humble role — it learns from what already happened in your logs and helps prioritize what to look at next. It does not get to override your gates or fire orders on its own.
-
-**This repo is documentation only.** There is no live trading code here, no API keys, and no connection to any broker.
+When you deploy, install and run the Holy Grail System on hardware you control. Maintain **account files** (accounts and related settings), broker or exchange connections, and journals on that host. This git project holds **documentation only**.
 
 ---
 
-## The three things that matter
+## How to use this guide
 
-**Automated trading** is the heartbeat — scans, screening, and the execution paths you turn on, kept in sync with your live positions.
 
-**Risk management** is the boss. Margin, exposure, bad symbols, rate limits, and a paper trail for every allow or deny. If risk says no, nothing trades — period.
+| Start here                               | When it helps                                                                                                         |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| [ARCHITECTURE.md](./ARCHITECTURE.md)     | Review the module map, venue API references, data layout, and operating guidance before you change automation or risk |
+| [PROCESS_FLOW.md](./PROCESS_FLOW.md)     | Follow setup, boot, and steady-state review of the watch loop                                                         |
+| [project.meta.json](./project.meta.json) | Index or search metadata about this doc set                                                                           |
 
-**Machine learning** sits underneath that, quietly. It remembers outcomes, nudges ranking and context, and stays auditable. Rules and logs still decide what hits the market.
+
+Read [Operating guidance](./ARCHITECTURE.md#operating-guidance) when you want the short list of behaviors to expect from a healthy deployment.
 
 ---
 
-## How the layers stack
+## What you configure on your side
+
+**Account files** — Merge System defaults with venue identity, automation toggles, and risk preferences for your deployment. Keep non-secret settings in account files on the host; never commit API keys or live credentials to git.
+
+**API connection** — Create API credentials in your venue's developer portal. Record key permissions, REST base URLs, and stream endpoints in account files so the System can authenticate and respect vendor rate limits.
+
+**Stack order** — Expect risk checks first on every path that can send an order. Run automation on the watch loop you allow. Use Machine Learning to read trade and skip history for prioritization or labels; do not treat it as order approval or credential storage.
+
+**Venue connection** — Point each deployment at one primary venue—for example Binance or Bitget for crypto, an MT5 bridge or broker REST stack for forex, or a US equities broker with a published trading API (Alpaca, Interactive Brokers, Tradier, Charles Schwab, tastytrade, and others listed in ARCHITECTURE). Mirror official REST and stream patterns in account files, and rely on automatic delay and backoff when limits apply.
+
+**Official references** — Retail US equities require a broker with a published trading API. See [Example venues and API references](./ARCHITECTURE.md#example-venues-and-api-references) for documentation links and connection notes.
+
+---
+
+## How the desk is organized
+
+**Risk and audit** — Check margin, exposure, symbols, and connectivity before any manual or automated order. Log every allow and deny. Do not send an order when risk does not clear.
+
+**Holy Grail automation** — Run the watch loop after risk passes. Screen markets and act only on paths you enabled, aligned with live positions.
+
+**Machine Learning** — Read journal history for prioritization hints. Treat output as advisory alongside rules and logs, not as a substitute for risk screening.
 
 ```mermaid
 flowchart TB
   RM[Risk — always first]
   HG[Holy Grail automation]
-  ML[ML support]
+  ML[Machine Learning]
   RM --> HG
   HG --> ML
   ML -.->|cannot skip| RM
 ```
 
----
 
-## Who might care about this
-
-If you are an independent or desk-style trader who wants real automation without shipping credentials to someone else's cloud — this is the design language I use.
-
-If you are tired of tools that sound smart but cannot explain why they skipped a trade — everything here is built around **logged reasons**, not vibes.
-
-If you want ML in the stack but not a magic black box — learning feeds the loop; it does not replace it.
 
 ---
 
-## What you actually get
+## Who this guide is for
 
-- A **watch → gate → act** loop you control, not a mystery cron job.
-- **Risk checks** before automated or manual orders.
-- **Light-touch ML** in the running app — outcome-aware, not auto-trade-by-default.
-- **One profile**, one broker or exchange connection.
-- A **live dashboard** with streams when balances or positions move.
-- **Journals and skip logs** so you can answer "why?" later.
+**Self-hosted users** — Run automation without handing credentials to someone else's cloud.
+
+**Review-focused traders** — Keep a written reason for every trade and skip when you close the day.
+
+**Advisory Machine Learning** — Include models in the workflow with a clear non-execution role, not unattended auto-trading.
 
 ---
 
-## Day to day, in three steps
+## What a normal day looks like
 
 ```mermaid
 flowchart LR
@@ -63,31 +76,25 @@ flowchart LR
   AUTO --> REVIEW[Review]
 ```
 
-1. **Connect** — Your feeds stay healthy; the engine watches that quietly.
-2. **Automate** — Holy Grail's watch loop runs: screen, risk gate, then only approved actions.
-3. **Review** — You use the dashboard and logs to tune policy. History is there for you and for ML feedback — not for blind trust in a model.
 
-Go deeper: [ARCHITECTURE.md](./ARCHITECTURE.md) (how it is put together) · [PROCESS_FLOW.md](./PROCESS_FLOW.md) (what happens when)
 
----
+1. **Connect** — Confirm market and account feeds are healthy; let the System monitor connectivity in the background.
+2. **Automate** — Run the watch loop: screen, pass risk, then execute only actions you approved.
+3. **Review** — Adjust policy from the dashboard and journals. Use history and Machine Learning feedback together with the audit trail as the record of what ran.
 
-## Built with
-
-Node.js and Express on the server, WebSockets for live updates, simple HTML/JS dashboards, JSON state and append-only journals in the deployed app, plus whatever process manager you use to keep it running. Brokers and exchanges over REST/WebSocket; optional chat alerts if you want them.
+Expect a **watch → screen → act** loop with logged outcomes, **risk checks** on manual and automated orders, a **live dashboard** with stream updates, and **journals and skip logs** you can read and analyze later.
 
 ---
 
-## Files in this repo
+## What the deployed System is built with
 
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — modules and principles  
-- [PROCESS_FLOW.md](./PROCESS_FLOW.md) — startup through review  
-- [project.meta.json](./project.meta.json) — keywords for profiles and search  
+**Typical stack** — Run Node.js and Express, WebSockets for live updates, HTML/JS dashboards, JSON state and append-only journals, and a process manager you choose. Connect brokers and exchanges over REST/WebSocket; add chat or webhook alerts if you need them.
 
 ---
 
 ## Disclaimer
 
-This is not financial advice. It describes software for running a trading desk, not what to buy or sell. Past behavior of any setup does not promise future results. Know your exchange rules and your local laws.
+This documentation describes software for operating a trading desk. It is **not financial advice** and does not recommend what to buy or sell. Past behavior of any setup does not promise future results. You are responsible for exchange rules, licensing, and laws that apply where you trade.
 
 ## License
 
@@ -95,6 +102,6 @@ This is not financial advice. It describes software for running a trading desk, 
 
 ## Contributing
 
-Please do not commit secrets, live configs, or strategy parameters.
+Keep secrets, live account files, and strategy parameters out of commits.
 
 **Contact:** [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
