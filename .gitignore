@@ -1,0 +1,31 @@
+# Secrets and environment
+.env
+.env.*
+!.env.example
+discord.env
+*.pem
+*.key
+id_rsa*
+
+# Runtime data (never publish)
+data/
+accounts.json
+**/accounts.json
+
+# Logs and local caches
+logs/
+*.log
+npm-debug.log*
+
+# Dependencies if ever added
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Backups
+backups/
+*.bak

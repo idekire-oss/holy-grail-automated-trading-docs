@@ -1,0 +1,45 @@
+{
+  "name": "holy-grail-automated-trading-docs",
+  "title": "Holy Grail's Automated Trading",
+  "shortTitle": "Holy Grail Automated Trading",
+  "author": "Holy Grail Z-2311",
+  "contactEmail": "ninongbee000@gmail.com",
+  "version": "2.1.0",
+  "year": 2026,
+  "type": "product-documentation",
+  "assetClasses": ["crypto", "stocks", "forex"],
+  "roleKeywords": [
+    "full-stack",
+    "nodejs",
+    "express",
+    "websocket",
+    "exchange-integration",
+    "single-operator",
+    "automated-trading",
+    "risk-management",
+    "machine-learning",
+    "trading-desk",
+    "crypto",
+    "stocks",
+    "forex",
+    "holy-grail"
+  ],
+  "stack": {
+    "runtime": ["Node.js"],
+    "backend": ["Express", "WebSocket"],
+    "frontend": ["Static HTML/JS dashboards"],
+    "data": ["JSON state", "append-only journals"],
+    "ops": ["Process manager", "deployment scripts"]
+  },
+  "tags": [
+    "holy-grail-automated-trading",
+    "trading-operations",
+    "system-design",
+    "architecture",
+    "documentation",
+    "self-hosted",
+    "single-user",
+    "not-investment-advice"
+  ],
+  "license": "MIT"
+}
