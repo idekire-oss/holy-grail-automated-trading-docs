@@ -1,4 +1,4 @@
-# Holy Grail's Automated Trading
+# Trading Automation - Holy Grail
 
 **Author:** Holy Grail Z-2311 · [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
 
