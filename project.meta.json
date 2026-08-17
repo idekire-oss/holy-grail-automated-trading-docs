@@ -2,8 +2,8 @@
   "name": "holy-grail-automated-trading-docs",
   "title": "Holy Grail's Automated Trading",
   "shortTitle": "Holy Grail Automated Trading",
-  "tagline": "User guide for a self-hosted, single-account trading desk.",
-  "description": "User guide for Holy Grail's Automated Trading by Holy Grail Z-2311: architecture, watch-loop flows, account files, and example venue API references (Binance, Bitget, forex/MT5, US stock brokers with published APIs). Documentation only—execution and credentials stay on the host you operate.",
+  "tagline": "User guide for a single-account trading desk.",
+  "description": "User guide for Holy Grail's Automated Trading by Holy Grail Z-2311: architecture, watch-loop flows, account files, and example venue API references (Binance, Bitget, forex/MT5, US stock brokers with published APIs). Documentation only—execution and credentials stay in the deployment.",
   "author": "Holy Grail Z-2311",
   "contactEmail": "ninongbee000@gmail.com",
   "version": "2.1.0",
@@ -40,7 +40,6 @@
     "system-design",
     "architecture",
     "documentation",
-    "self-hosted",
     "single-user",
     "not-investment-advice"
   ],

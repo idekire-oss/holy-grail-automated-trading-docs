@@ -2,7 +2,7 @@
 
 **Holy Grail's Automated Trading** · **Holy Grail Z-2311** · [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
 
-Use this page when you need a map of the Holy Grail System on the machine you operate. The diagrams and module names here describe the **deployed System**. This git repository stores the guide only; trading, broker sessions, account files, and journals live in the System you run locally.
+Use this page when you need a map of the Holy Grail System. The diagrams and module names here describe the **deployed System**. This git repository stores the guide only; trading, broker sessions, account files, and journals live in the live System.
 
 When you deploy Holy Grail we can expect crypto, stocks, and forex in a single System instance. Enable automation for repetitive watch-and-act work. Run risk before any order path executes. Use Machine Learning to read trade and skip history for prioritization hints, it stays advisory and never submits orders or bypasses risk.
 
@@ -46,7 +46,7 @@ flowchart LR
     BOT[Optional alerts]
   end
 
-  subgraph App["Your host"]
+  subgraph App["The System"]
     API[HTTP API]
     WS[WebSocket relay]
     ORCH[Watch loop]
@@ -104,7 +104,7 @@ flowchart LR
 
 Holy Grail runs **one account per deployment**; that account connects to **one primary venue** at a time (crypto exchange, forex stack, or retail broker). Use account files to record venue name, environment (live or paper), base URLs, and permission scopes. Read each vendor's official documentation for authentication, user streams, and rate limits, then align your deployment with **Exchange rate limits** in Operating guidance below.
 
-**Crypto — Binance** — Follow Binance developer documentation for REST and WebSocket usage. Use separate doc sets for spot versus USDⓈ-M futures if you trade both. Store API keys and IP allowlists in account configuration on your host.
+**Crypto — Binance** — Follow Binance developer documentation for REST and WebSocket usage. Use separate doc sets for spot versus USDⓈ-M futures if you trade both. Store API keys and IP allowlists in account configuration in the deployment.
 
 - [Binance Developer Center](https://developers.binance.com/en)
 - [Binance Spot API documentation](https://developers.binance.com/docs/binance-spot-api-docs/README)
@@ -122,7 +122,7 @@ Holy Grail runs **one account per deployment**; that account connects to **one p
 
 **Forex — broker REST (general)** — Many FX brokers publish REST or FIX bridges. Start from the broker's primary developer portal and mirror connection settings in account files. Example: [OANDA REST v20 introduction](https://developer.oanda.com/rest-live-v20/introduction/).
 
-**Stocks — US equities (published APIs)** — Retail US stock automation requires a broker that ships official developer documentation. Map one broker account per deployment in account files; store credentials on the host, never in git.
+**Stocks — US equities (published APIs)** — Retail US stock automation requires a broker that ships official developer documentation. Map one broker account per deployment in account files; store credentials in the deployment, never in git.
 
 **Stocks — Alpaca** — Use Alpaca Trading and Market Data APIs for US equities (and crypto where your account allows). Read the US docs hub and validate in paper before live keys.
 
@@ -151,7 +151,7 @@ Holy Grail runs **one account per deployment**; that account connects to **one p
 
 ## Where data lives (in the live System)
 
-**Operational stores** — Plan separate locations for connection health and rate windows, non-secret account configuration, trading lists and caches, journals (including history Machine Learning can learn from), and append-only security audit logs. Keep API credentials in account configuration on the host, never in git.
+**Operational stores** — Plan separate locations for connection health and rate windows, non-secret account configuration, trading lists and caches, journals (including history Machine Learning can learn from), and append-only security audit logs. Keep API credentials in account configuration in the deployment, never in git.
 
 This documentation folder does not ship any of that data.
 
@@ -191,7 +191,7 @@ When you deploy and run Holy Grail, keep the following in mind. They describe ho
 
 **Exchange rate limits** — Pace REST and stream traffic with automatic delay and backoff. Wait within published limits rather than driving repeated API errors.
 
-**Docs versus live System** — Use this repository for architecture and process guides. Run trading, account files, broker sessions, and journals in the System on infrastructure you control.
+**Docs versus live System** — Use this repository for architecture and process guides. Run trading, account files, broker sessions, and journals in the live System.
 
 ---
 

@@ -2,9 +2,9 @@
 
 **Author:** Holy Grail Z-2311 · [ninongbee000@gmail.com](mailto:ninongbee000@gmail.com)
 
-This repository is the **user guide** for Holy Grail's Automated Trading—a self-hosted desk you run for **one account** across crypto, stocks, and forex. Use these pages to learn how the System is organized, how a normal day flows, and what to configure on your side before anything trades.
+This repository is the **user guide** for Holy Grail's Automated Trading—a desk you run for **one account** across crypto, stocks, and forex. Use these pages to learn how the System is organized, how a normal day flows, and what to configure on your side before anything trades.
 
-When you deploy, install and run the Holy Grail System on hardware you control. Maintain **account files** (accounts and related settings), broker or exchange connections, and journals on that host. This git project holds **documentation only**.
+When you deploy, install and run the Holy Grail System. Maintain **account files** (accounts and related settings), broker or exchange connections, and journals in the deployment. This git project holds **documentation only**.
 
 ---
 
@@ -24,7 +24,7 @@ Read [Operating guidance](./ARCHITECTURE.md#operating-guidance) when you want th
 
 ## What you configure on your side
 
-**Account files** — Merge System defaults with venue identity, automation toggles, and risk preferences for your deployment. Keep non-secret settings in account files on the host; never commit API keys or live credentials to git.
+**Account files** — Merge System defaults with venue identity, automation toggles, and risk preferences for your deployment. Keep non-secret settings in account files; never commit API keys or live credentials to git.
 
 **API connection** — Create API credentials in your venue's developer portal. Record key permissions, REST base URLs, and stream endpoints in account files so the System can authenticate and respect vendor rate limits.
 
@@ -60,7 +60,7 @@ flowchart TB
 
 ## Who this guide is for
 
-**Self-hosted users** — Run automation without handing credentials to someone else's cloud.
+**Operators** — Keep live credentials in the deployment, never in git.
 
 **Review-focused traders** — Keep a written reason for every trade and skip when you close the day.
 
